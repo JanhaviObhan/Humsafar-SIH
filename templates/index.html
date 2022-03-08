@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patch</title>
+
+    <!-- BootStrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+
+<body id="bg-img">
+    <span id="splash-overlay" class="splash text-center"></span>
+    <span id="welcome" class="z-depth-4"></span>
+
+    <div class="container text-center">
+        <p>"Being differently abled should not mean being disqualified from having access to every aspect
+            of life"</p>
+    </div>
+
+    <div class="glass">
+        <form action="" method="POST">
+            <input type="email" name="email" placeholder="Email" required> <br><br>
+
+            <input type="password" name="password" placeholder="Password" required> <br><br>
+
+            <div class="text-center">
+                <button type="submit" class="btn">Sign In</button> <br><br>
+
+                <a href="">Don't have an account ? Register</a>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- BootStrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <!-- Custom CSS -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+
+    <!-- Font Awesome Kit necessary for icons -->
+    <script src="https://kit.fontawesome.com/2eb0c99189.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

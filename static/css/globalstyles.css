@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Arvo&family=Hubballi&family=Trochut&display=swap");
+
+:root {
+  /* Colors */
+  --white: #fff;
+  --black: #000;
+  --brown: #e4dad2;
+  --blue: #b2b5fd;
+  --purple: #d1acff;
+  --cyan: #b2ddfd;
+  --orange: #feae47;
+  --grey: #434852;
+
+  /* Font Family */
+  --familyAnton: "Anton", sans-serif;
+  --familyArvo: "Arvo", serif;
+  --familyHubballi: "Hubballi", cursive;
+  --familyTrochut: "Trochut", cursive;
+
+  /* Font Size */
+  --fontBig: 2.2rem;
+  --fontMed: 1.5rem;
+  --fontSmall: 0.8rem;
+}
