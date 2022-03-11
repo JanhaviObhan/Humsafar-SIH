@@ -59,8 +59,8 @@ def owner_login():
 
         for i in r:
             if (email == i[2] and password == i[3]):
-                session['user'] = i[0]
-                return 'hello owner'
+                session['owner'] = i[0]
+                return redirect(url_for('owner_home'))
         else:
             flash("Invalid Email or Password", 'invalidOwner')
 
@@ -101,6 +101,8 @@ def user_logout():
     session.pop('user', None)
     return redirect(url_for('index'))
 
+
+# ------------- USER
 @app.route('/user_home')
 def user_home():
     if g.user:
@@ -131,9 +133,57 @@ def user_profile(id):
 
         return send_file(BytesIO(certificate), attachment_filename='flask.png', as_attachment=False)
 
-@app.route('/recommend')
-def recommend():
-    return render_template('recommend.html')
+@app.route('/user_recommendation', methods=['GET', 'POST'])
+def user_recommendation():
+    if g.user:
+        if request.method == 'POST':
+            return render_template('user_recommendation.html')
+    return redirect(url_for('index'))
+
+
+# ------------- OWNER
+@app.route('/owner_home')
+def owner_home():
+    if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM users WHERE id = '"+str(session['owner'])+"'")
+        rs = c.fetchone()
+
+        conn.close()
+
+        context = {
+            'rs': rs
+        }
+        return render_template('owner_home.html', **context)
+    return redirect(url_for('index'))
+
+@app.route('/owner_profile<int:id>')
+def owner_profile(id):
+    if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM users WHERE id = '"+str(id)+"'")
+        rs = c.fetchone()
+        certificate = rs[4]
+        conn.close()
+
+        return send_file(BytesIO(certificate), attachment_filename='flask.png', as_attachment=False)
+
+@app.route('/owner_recommendation', methods=['GET', 'POST'])
+def owner_recommendation():
+    if g.owner:
+        if request.method == 'POST':
+            return render_template('owner_recommendation.html')
+    return redirect(url_for('index'))
+
+@app.route('/owner_place')
+def owner_place():
+    if g.owner:
+        return render_template('owner_place.html')
+    return redirect(url_for('index'))
 
 
 @app.before_request
