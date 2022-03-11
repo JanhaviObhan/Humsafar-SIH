@@ -2,54 +2,277 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patch</title>
 
-    <!-- BootStrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Arvo&family=Hubballi&family=Sansita+Swashed&family=Trochut&display=swap"
+    rel="stylesheet">
 
+  <title>Patch</title>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <!-- Additional CSS Files -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animated.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.css') }}">
+
 </head>
 
-<body id="bg-img">
-    <span id="splash-overlay" class="splash text-center"></span>
-    <span id="welcome" class="z-depth-4"></span>
+<body>
 
-    <div class="container text-center">
-        <p>"Being differently abled should not mean being disqualified from having access to every aspect
-            of life"</p>
+  {% with messages = get_flashed_messages(category_filter=["register"]) %}
+  {% if messages %}
+  {% for msg in messages %}
+  <script>
+    window.alert('{{ msg }}');
+  </script>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  {% with messages = get_flashed_messages(category_filter=["invalidOwner"]) %}
+  {% if messages %}
+  {% for msg in messages %}
+  <script>
+    window.alert('{{ msg }}');
+  </script>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  {% with messages = get_flashed_messages(category_filter=["invalidUser"]) %}
+  {% if messages %}
+  {% for msg in messages %}
+  <script>
+    window.alert('{{ msg }}');
+  </script>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <!-- ***** Logo Start ***** -->
+            <a href="/" class="logo">
+              <img src="{{ url_for('static', filename='assets/images/logo.png') }}" alt="Chain App Dev">
+            </a>
+            <!-- ***** Logo End ***** -->
+            <!-- ***** Menu Start ***** -->
+            <ul class="nav">
+              <li>
+                <div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign
+                    In Now</a></div>
+              </li>
+            </ul>
+            <a class='menu-trigger'>
+              <span>Menu</span>
+            </a>
+            <!-- ***** Menu End ***** -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+
+  <div id="modal" class="popupContainer" style="display:none;">
+    <div class="popupHeader">
+      <span class="header_title">Login</span>
+      <span class="modal_close"><i class="fa fa-times"></i></span>
     </div>
 
-    <div class="glass">
-        <form action="" method="POST">
-            <input type="email" name="email" placeholder="Email" required> <br><br>
+    <section class="popupBody">
+      <!-- Social Login -->
+      <div class="social_login">
+        <div class="">
+          <a href="#" id="user_login" class="social_box fb">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <span class="icon_title">User Login</span>
 
-            <input type="password" name="password" placeholder="Password" required> <br><br>
+          </a>
 
-            <div class="text-center">
-                <button type="submit" class="btn">Sign In</button> <br><br>
+          <a href="#" id="owner_login" class="social_box google">
+            <span class="icon"><i class="fas fa-user-plus"></i></span>
+            <span class="icon_title">Owner Login</span>
+          </a>
+        </div>
 
-                <a href="">Don't have an account ? Register</a>
+        <div class="action_btns">
+          <div class="full"><a href="#" id="register_form" class="btn">Register</a></div>
+        </div>
+      </div>
+
+      <!-- User Login form -->
+      <div class="user_login">
+        <form action="/user_login" method="POST" id="userLoginForm">
+          <label>Email</label>
+          <input type="email" name="email" required />
+          <br />
+
+          <label>Password</label>
+          <input type="password" name="password" required />
+          <br />
+
+          <div class="action_btns">
+            <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a>
             </div>
+            <div class="one_half last"><a href="#" class="btn btn_red" onclick="userSubmit()">Login</a></div>
+          </div>
         </form>
+
+        <a href="#" class="forgot_password">Forgot password?</a>
+      </div>
+
+      <!-- Owner Login form -->
+      <div class="owner_login">
+        <form action="/owner_login" method="POST" id="ownerLoginForm">
+          <label>Email</label>
+          <input type="email" name="email" required />
+          <br />
+
+          <label>Password</label>
+          <input type="password" name="password" required />
+          <br />
+
+          <div class="action_btns">
+            <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a>
+            </div>
+            <div class="one_half last"><a href="#" class="btn btn_red" onclick="ownerSubmit()">Login</a></div>
+          </div>
+        </form>
+
+        <a href="#" class="forgot_password">Forgot password?</a>
+      </div>
+
+      <!-- Register Form -->
+      <div class="user_register">
+        <form action="/register" method="POST" id="registerForm" enctype="multipart/form-data">
+          <label>Full Name</label>
+          <input type="text" name="username" required />
+          <br />
+
+          <label>Email Address</label>
+          <input type="email" name="email" required />
+          <br />
+
+          <label>Password</label>
+          <input type="password" name="password" required />
+          <br />
+
+          <label for="">Role</label>
+          <select name="role" id="" required>
+            <option value="" disabled selected> -- SELECT -- </option>
+            <option value="user">User</option>
+            <option value="owner">Owner</option>
+          </select>
+          <br>
+
+          <label for="">Profile Picture</label>
+          <input type="file" accept="image/*" name="profile" class="input-text" required>
+          <br>
+
+          <div class="action_btns">
+            <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a>
+            </div>
+            <div class="one_half last"><a href="#" class="btn btn_red" onclick="registerSubmit()">Register</a></div>
+          </div>
+        </form>
+
+        <script>
+          function userSubmit() {
+            document.getElementById("userLoginForm").submit();
+          }
+          function ownerSubmit() {
+            document.getElementById("ownerLoginForm").submit();
+          }
+          function registerSubmit() {
+            document.getElementById("registerForm").submit();
+          }
+        </script>
+
+      </div>
+    </section>
+  </div>
+
+  <div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-lg-6 align-self-center">
+              <div class="left-content show-up header-text wow fadeInLeft" data-wow-duration="1s" data-wow-delay="1s">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <h2 class="text-justify riteshfont"
+                      style="font-family: 'Sansita Swashed', cursive; margin-top: -90px;">"Being
+                      differently abled
+                      should not
+                      mean being disqualified from having
+                      access to every aspect
+                      of life"</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="right-image wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
+                <img src="{{ url_for('static', filename='assets/images/bg.png') }}" alt="" class="riteshimg"
+                  style="margin-top: -150px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <style>
+    @media screen and (max-width:600px) {
+      .riteshfont {
+        font-size: 1.8rem !important;
+      }
+
+      .riteshimg {
+        margin-top: 0px !important;
+      }
+    }
+  </style>
 
 
-    <!-- BootStrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
-
-    <!-- Custom CSS -->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
-
-    <!-- Font Awesome Kit necessary for icons -->
-    <script src="https://kit.fontawesome.com/2eb0c99189.js" crossorigin="anonymous"></script>
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/owl-carousel.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/animation.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/imagesloaded.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/popup.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
 </body>
 
 </html>
