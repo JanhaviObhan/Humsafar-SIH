@@ -185,6 +185,12 @@ def owner_place():
         return render_template('owner_place.html')
     return redirect(url_for('index'))
 
+@app.route('/owner_new_place')
+def owner_new_place():
+    if g.owner:
+        return render_template('owner_new_place.html')
+    return redirect(url_for('index'))
+
 
 @app.before_request
 def before_request():
