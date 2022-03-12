@@ -219,11 +219,18 @@ def owner_place():
         return render_template('owner_place.html', **context)
     return redirect(url_for('index'))
 
-@app.route('/owner_new_place')
+@app.route('/owner_new_place', methods=['GET', 'POST'])
 def owner_new_place():
     if g.owner:
         conn = psycopg2.connect(database)
         c = conn.cursor()
+
+        c.execute("SELECT * FROM users WHERE id = '"+str(session['owner'])+"'")
+        rs = c.fetchone()
+
+        context = {
+            'rs': rs,
+        }
 
         if request.method == 'POST':
 
@@ -252,7 +259,7 @@ def owner_new_place():
 
             flash("New Place added successfully ! ", 'newplace')
             return redirect(url_for('owner_place'))
-        return render_template('owner_new_place.html')
+        return render_template('owner_new_place.html', **context)
     return redirect(url_for('index'))
 
 @app.route('/owner_delete_place<int:id>')
@@ -270,51 +277,60 @@ def owner_delete_place(id):
 
 @app.route('/owner_update_place<int:id>', methods=['POST', 'GET'])
 def owner_update_place(id):
-    conn = psycopg2.connect(database)
-    c = conn.cursor()
+    if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
 
-    c.execute("SELECT * FROM places WHERE id = '"+str(id)+"'")
-    place = c.fetchone()
+        c.execute("SELECT * FROM users WHERE id = '"+str(session['owner'])+"'")
+        rs = c.fetchone()
 
-    context = {
-        'place': place
-    }
+        c.execute("SELECT * FROM places WHERE id = '"+str(id)+"'")
+        place = c.fetchone()
 
-    if request.method == 'POST':
+        context = {
+            'rs': rs,
+            'place': place
+        }
 
-            facilities = ''
+        if request.method == 'POST':
 
-            propertyname = request.form['propertyname']
-            propertypic = request.files['propertypic']
-            shop = request.form['shop']
-            city = request.form['city']
-            state = request.form['state']
-            pincode = request.form['pincode']
-            telephone = request.form['telephone']
-            venue = request.form['place']
-            owner = session['owner']
+                facilities = ''
 
-            value = request.form.getlist('check')
-            for values in value:
-                facilities += values + ", "
+                propertyname = request.form['propertyname']
+                propertypic = request.files['propertypic']
+                shop = request.form['shop']
+                city = request.form['city']
+                state = request.form['state']
+                pincode = request.form['pincode']
+                telephone = request.form['telephone']
+                venue = request.form['place']
+                owner = session['owner']
 
-            c.execute("""
-            UPDATE places SET (propertyname, propertypic, shop, city, state, pincode, telephone, venue, facilities, owner) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE id = %s
-            """, (propertyname, propertypic.read(), shop, city, state, pincode, telephone, venue, facilities, owner, id))
+                value = request.form.getlist('check')
+                for values in value:
+                    facilities += values + ", "
 
-            conn.commit()
-            conn.close()
+                c.execute("""
+                UPDATE places SET (propertyname, propertypic, shop, city, state, pincode, telephone, venue, facilities, owner) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE id = %s
+                """, (propertyname, propertypic.read(), shop, city, state, pincode, telephone, venue, facilities, owner, id))
 
-            flash("Place data updated added successfully ! ", 'updateplace')
-            return redirect(url_for('owner_place'))
+                conn.commit()
+                conn.close()
 
-    return render_template('owner_update_place.html', **context)
+                flash("Place data updated added successfully ! ", 'updateplace')
+                return redirect(url_for('owner_place'))
+
+        return render_template('owner_update_place.html', **context)
+    return redirect(url_for('index'))
 
 @app.route('/owner_review_place<int:id>')
 def owner_review_place(id):
     if g.owner:
         conn = psycopg2.connect(database)
         c = conn.cursor()
+
+        c.execute("SELECT propertyname FROM places WHERE id = '"+str(id)+"'")
+        name = c.fetchone()
 
         c.execute("SELECT * FROM reviews WHERE place = '"+str(id)+"'")
         reviews = c.fetchall()
@@ -326,6 +342,7 @@ def owner_review_place(id):
         negative = c.fetchone()
         
         context = {
+            'name': name,
             'reviews': reviews,
             'positive': positive,
             'negative': negative
@@ -385,13 +402,17 @@ def review(id):
         sentiment = review_model(review)
 
         if g.user:
-            email = session['user']
+            c.execute("SELECT name FROM users WHERE id = '"+str(session['user'])+"'")
+            name = c.fetchone()
+            userid = session['user']
         elif g.owner:
-            email = session['owner']
+            c.execute("SELECT name FROM users WHERE id = '"+str(session['owner'])+"'")
+            name = c.fetchone()
+            userid = session['owner']
         else:
             return redirect(url_for(index))
 
-        c.execute("INSERT INTO reviews (email, review, place, sentiment) VALUES (%s, %s, %s, %s)", (email, review, place, sentiment))
+        c.execute("INSERT INTO reviews (name, review, place, sentiment, userid) VALUES (%s, %s, %s, %s, %s)", (name[0], review, place, sentiment, userid))
         conn.commit()
         return redirect(url_for('home'))
 

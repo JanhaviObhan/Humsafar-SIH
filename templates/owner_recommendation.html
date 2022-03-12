@@ -3,6 +3,33 @@
 
 <head>
 
+    <style>
+        .comment-wrapper .panel-body {
+            width: 90%;
+            max-height: 550px;
+            overflow: auto;
+            align-items: center;
+        }
+
+        form,
+        hr {
+            width: 90%;
+        }
+
+        .comment-wrapper .media-list .media img {
+            width: 64px;
+            height: 64px;
+            border: 2px solid #e5e7e8;
+            align-items: center;
+        }
+
+        .comment-wrapper .media-list .media {
+            border-bottom: 1px dashed #e5e7e8;
+            margin-bottom: 25px;
+            padding-bottom: 5px;
+        }
+    </style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -29,6 +56,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animated.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.css') }}">
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -104,7 +135,7 @@
                             <li>Contact: {{place2[7]}}</li>
                         </ul>
                         <div class="border-button">
-                            <a href="" class="col-lg-4">Review</a>
+                            <a href="" class="col-lg-4" data-toggle="modal" data-target="#Modal{{place2[0]}}">Review</a>
                             <a href="#" class="col-lg-6">Get Directions</a>
                         </div>
                     </div>
@@ -121,7 +152,7 @@
                             <li>Contact: {{place1[7]}}</li>
                         </ul>
                         <div class="border-button">
-                            <a href="" class="col-lg-4">Review</a>
+                            <a href="" class="col-lg-4" data-toggle="modal" data-target="#Modal{{place1[0]}}">Review</a>
                             <a href="#" class="col-lg-6">Get Directions</a>
                         </div>
                     </div>
@@ -138,7 +169,7 @@
                             <li>Contact: {{place3[7]}}</li>
                         </ul>
                         <div class="border-button">
-                            <a href="" class="col-lg-4">Review</a>
+                            <a href="" class="col-lg-4" data-toggle="modal" data-target="#Modal{{place3[0]}}">Review</a>
                             <a href="#" class="col-lg-6">Get Directions</a>
                         </div>
                     </div>
@@ -148,6 +179,180 @@
     </div>
 
     <div style="margin-top: 100px;"></div>
+
+
+    <!-- Modal -->
+
+    <div class="modal fade" id="Modal{{place1[0]}}" role="dialog">
+        <div class="modal-dialog" style="min-width: 70%; max-height: 50px;">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h7 class="modal-title" id="exampleModalLongTitle"><b>{{place1[1]}} - Reviews</b></h7>
+                    <a href="" type="gradient-button" class="close" data-dismiss="modal" aria-label="Close">
+                        x
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="content align-content-center">
+                        <div class="container">
+                            <div class="row bootstrap snippets bootdeys">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="comment-wrapper">
+                                        <div class="panel-body">
+                                            <ul class="media-list">
+
+                                                {% for reviews in review1 %}
+                                                <li class="media">
+                                                    <a href="#" class="pull-left">
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt=""
+                                                            class="img-circle" />
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <strong class="text">{{reviews[1]}}</strong>
+                                                        <p>
+                                                            {{reviews[2]}}
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                                {% endfor %}
+
+                                            </ul>
+                                        </div>
+                                        <hr />
+                                        <form action="/review{{place1[0]}}" method="POST">
+                                            <textarea class="form-control" placeholder="write a comment..." rows="3"
+                                                name="review"></textarea>
+                                            <br />
+                                            <button type="submit" class="btn btn-info pull-right">
+                                                Post
+                                            </button>
+                                        </form>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="Modal{{place2[0]}}" role="dialog">
+        <div class="modal-dialog" style="min-width: 70%; max-height: 50px;">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h7 class="modal-title" id="exampleModalLongTitle"><b>{{place2[1]}} - Reviews</b></h7>
+                    <a href="" type="gradient-button" class="close" data-dismiss="modal" aria-label="Close">
+                        x
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="content align-content-center">
+                        <div class="container">
+                            <div class="row bootstrap snippets bootdeys">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="comment-wrapper">
+                                        <div class="panel-body">
+                                            <ul class="media-list">
+
+                                                {% for reviews in review2 %}
+                                                <li class="media">
+                                                    <a href="#" class="pull-left">
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt=""
+                                                            class="img-circle" />
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <strong class="text">{{reviews[1]}}</strong>
+                                                        <p>
+                                                            {{reviews[2]}}
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                                {% endfor %}
+
+                                            </ul>
+                                        </div>
+                                        <hr />
+                                        <form action="/review{{place2[0]}}" method="POST">
+                                            <textarea class="form-control" placeholder="write a comment..." rows="3"
+                                                name="review"></textarea>
+                                            <br />
+                                            <button type="submit" class="btn btn-info pull-right">
+                                                Post
+                                            </button>
+                                        </form>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="Modal{{place3[0]}}" role="dialog">
+        <div class="modal-dialog" style="min-width: 70%; max-height: 50px;">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h7 class="modal-title" id="exampleModalLongTitle"><b>{{place3[1]}} - Reviews</b></h7>
+                    <a href="" type="gradient-button" class="close" data-dismiss="modal" aria-label="Close">
+                        x
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="content align-content-center">
+                        <div class="container">
+                            <div class="row bootstrap snippets bootdeys">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="comment-wrapper">
+                                        <div class="panel-body">
+                                            <ul class="media-list">
+
+                                                {% for reviews in review3 %}
+                                                <li class="media">
+                                                    <a href="#" class="pull-left">
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt=""
+                                                            class="img-circle" />
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <strong class="text">{{reviews[1]}}</strong>
+                                                        <p>
+                                                            {{reviews[2]}}
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                                {% endfor %}
+
+                                            </ul>
+                                        </div>
+                                        <hr />
+                                        <form action="/review{{place3[0]}}" method="POST">
+                                            <textarea class="form-control" placeholder="write a comment..." rows="3"
+                                                name="review"></textarea>
+                                            <br />
+                                            <button type="submit" class="btn btn-info pull-right">
+                                                Post
+                                            </button>
+                                        </form>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- BootStrap JS -->

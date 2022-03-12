@@ -280,7 +280,7 @@
             <div class="row">
                 <div class="col-lg-12 align-self-center">
                     <div class="section-heading">
-                        <h4><em>Add</em> New Place</h4>
+                        <h4><em>Edit</em> Place Info</h4>
                         <img src="{{ url_for('static', filename='assets/images/heading-line-dec.png') }}" alt="">
                     </div>
 
@@ -289,13 +289,13 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="booking-form">
-                                        <form action="/owner_new_place" method="POST" enctype="multipart/form-data">
+                                        <form action="/owner_update_place{{place[0]}}" method="POST"
+                                            enctype="multipart/form-data">
                                             <div class="form-group">
                                                 <span class="form-label">Name of Property:</span>
                                                 <!-- <label for="cc-payment" class="control-label mb-1">Name of Property:</label> -->
                                                 <input id="cc-payment" name="propertyname" type="text"
-                                                    placeholder="eg. RadhaKrishna Restrarant" class="form-control"
-                                                    required />
+                                                    value="{{place[1]}}" class="form-control" required />
                                             </div>
 
                                             <div class="row form-group">
@@ -313,8 +313,7 @@
                                                 <span class="form-label">Name of Owner:</span>
                                                 <!-- <label for="cc-name" class="control-label mb-1">Name of Owner:</label> -->
                                                 <input id="cc-name" name="cc-name" type="text"
-                                                    placeholder="eg. Nilesh Patel" class="form-control cc-name valid"
-                                                    readonly value="{{rs[1]}}" />
+                                                    class="form-control cc-name valid" readonly value="{{rs[1]}}" />
                                             </div>
 
                                             <div class="row">
@@ -324,9 +323,7 @@
                                                         <!-- <label for="cc-number" class="control-label mb-1">Shop No. / Building /
                                                                 Street:</label> -->
                                                         <input id="cc-exp" name="shop" type="text"
-                                                            class="form-control cc-exp"
-                                                            placeholder="eg. Shop no. 403, Empire Building, Shivaji Chowk"
-                                                            required />
+                                                            class="form-control cc-exp" value="{{place[3]}}" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
@@ -334,8 +331,7 @@
                                                     <!-- <label for="x_card_code" class="control-label mb-1">City:</label> -->
                                                     <div class="input-group">
                                                         <input id="cc-exp" name="city" type="text"
-                                                            class="form-control cc-exp" placeholder="eg. Kalyan"
-                                                            required />
+                                                            class="form-control cc-exp" value="{{place[4]}}" required />
                                                     </div>
                                                 </div>
                                             </div>
@@ -401,8 +397,7 @@
                                                     <!-- <label for="x_card_code" class="control-label mb-1">Pincode:</label> -->
                                                     <div class="input-group">
                                                         <input id="x_card_code" name="pincode" type="tel"
-                                                            class="form-control cc-cvc" placeholder="eg. 411016"
-                                                            required />
+                                                            class="form-control cc-cvc" value="{{place[6]}}" required />
                                                     </div>
                                                     <br />
                                                 </div>
@@ -411,8 +406,7 @@
                                                     <!-- <label for="x_card_code" class="control-label mb-1">Contact No:</label> -->
                                                     <div class="input-group">
                                                         <input id="x_card_code" name="telephone" type="tel"
-                                                            class="form-control cc-cvc" placeholder="eg. 9812314721"
-                                                            required />
+                                                            class="form-control cc-cvc" value="{{place[7]}}" required />
                                                     </div>
                                                     <br />
                                                 </div>
