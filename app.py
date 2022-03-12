@@ -14,6 +14,8 @@ database = 'postgres://gjscfkpgyogvvp:76996cc99db43b0479e8c5ecf0181da2d41561c9f5
 def index():
     return render_template('index.html')
 
+
+# ------------- REGISTRATION
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -44,6 +46,8 @@ def register():
 
     return redirect(url_for('index'))
 
+
+# ------------- OWNER LOGIN & LOGOUT
 @app.route('/owner_login', methods=['GET', 'POST'])
 def owner_login():
     if request.method == 'POST':
@@ -73,6 +77,8 @@ def owner_logout():
     session.pop('owner', None)
     return redirect(url_for('index'))
 
+
+# ------------- USER LOGIN & LOGOUT
 @app.route('/user_login', methods=['GET', 'POST'])
 def user_login():
     if request.method == 'POST':
@@ -133,6 +139,7 @@ def home():
         }
         return render_template('owner_home.html', **context)
     return redirect(url_for('index'))
+
 
 # ------------- RECOMMENDATION
 @app.route('/recommendation', methods=['GET', 'POST'])
