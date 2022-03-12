@@ -1167,6 +1167,29 @@ Services Style
 
 /*
 ---------------------------------------------
+Places
+---------------------------------------------
+*/
+
+.places-info {
+  padding-top: 130px;
+  position: relative;
+}
+.places-info::before {
+  background-image: url(../images/about-bg.jpg);
+  width: 777px;
+  height: 1132px;
+  content: "";
+  position: absolute;
+  background-repeat: no-repeat;
+  right: 0;
+  top: 100%;
+  transform: translateY(-40%);
+  z-index: 0;
+}
+
+/*
+---------------------------------------------
 About Us
 ---------------------------------------------
 */

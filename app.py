@@ -4,6 +4,9 @@ from flask.helpers import send_file
 from io import BytesIO
 import psycopg2
 import heapq
+import tensorflow as tf
+from transformers import DistilBertTokenizerFast
+from transformers import TFDistilBertForSequenceClassification
 
 app = Flask(__name__)
 app.secret_key = 'ritesh'
@@ -200,17 +203,135 @@ def recommendation():
     return redirect(url_for('index'))
 
 
+# ------------- PLACES - VIEW, ADD, DELETE, UPDATE, ANALYSIS
 @app.route('/owner_place')
 def owner_place():
     if g.owner:
-        return render_template('owner_place.html')
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM places WHERE owner = '"+str(session['owner'])+"'")
+        place = c.fetchall()
+
+        context = {
+            'place': place
+        }
+        return render_template('owner_place.html', **context)
     return redirect(url_for('index'))
 
 @app.route('/owner_new_place')
 def owner_new_place():
     if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        if request.method == 'POST':
+
+            facilities = ''
+
+            propertyname = request.form['propertyname']
+            propertypic = request.files['propertypic']
+            shop = request.form['shop']
+            city = request.form['city']
+            state = request.form['state']
+            pincode = request.form['pincode']
+            telephone = request.form['telephone']
+            venue = request.form['place']
+            owner = session['owner']
+
+            value = request.form.getlist('check')
+            for values in value:
+                facilities += values + " "
+
+            c.execute("""
+            INSERT into places (propertyname, propertypic, shop, city, state, pincode, telephone, venue, facilities, owner) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (propertyname, propertypic.read(), shop, city, state, pincode, telephone, venue, facilities, owner))
+
+            conn.commit()
+            conn.close()
+
+            flash("New Place added successfully ! ", 'newplace')
+            return redirect(url_for('owner_place'))
         return render_template('owner_new_place.html')
     return redirect(url_for('index'))
+
+@app.route('/owner_delete_place<int:id>')
+def owner_delete_place(id):
+    if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        c.execute("DELETE FROM places WHERE id = '"+str(id)+"'")
+        conn.commit()
+        conn.close()
+        flash("Place data deleted ! ", 'delete')
+        return redirect(url_for('owner_place'))
+    return redirect(url_for('index'))
+
+@app.route('/owner_update_place<int:id>', methods=['POST', 'GET'])
+def owner_update_place(id):
+    conn = psycopg2.connect(database)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM places WHERE id = '"+str(id)+"'")
+    place = c.fetchone()
+
+    context = {
+        'place': place
+    }
+
+    if request.method == 'POST':
+
+            facilities = ''
+
+            propertyname = request.form['propertyname']
+            propertypic = request.files['propertypic']
+            shop = request.form['shop']
+            city = request.form['city']
+            state = request.form['state']
+            pincode = request.form['pincode']
+            telephone = request.form['telephone']
+            venue = request.form['place']
+            owner = session['owner']
+
+            value = request.form.getlist('check')
+            for values in value:
+                facilities += values + ", "
+
+            c.execute("""
+            UPDATE places SET (propertyname, propertypic, shop, city, state, pincode, telephone, venue, facilities, owner) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE id = %s
+            """, (propertyname, propertypic.read(), shop, city, state, pincode, telephone, venue, facilities, owner, id))
+
+            conn.commit()
+            conn.close()
+
+            flash("Place data updated added successfully ! ", 'updateplace')
+            return redirect(url_for('owner_place'))
+
+    return render_template('owner_update_place.html', **context)
+
+@app.route('/owner_review_place<int:id>')
+def owner_review_place(id):
+    if g.owner:
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM reviews WHERE place = '"+str(id)+"'")
+        reviews = c.fetchall()
+
+        c.execute("SELECT COUNT(sentiment) FROM reviews WHERE sentiment = 'Positive' AND place = '"+str(id)+"'")
+        positive = c.fetchone()
+
+        c.execute("SELECT COUNT(sentiment) FROM reviews WHERE sentiment = 'Negative' AND place = '"+str(id)+"'")
+        negative = c.fetchone()
+        
+        context = {
+            'reviews': reviews,
+            'positive': positive,
+            'negative': negative
+        }
+
+        return render_template('owner_review_place.html', **context)
 
 
 # ------------- PROFILE PICTURES
@@ -237,6 +358,42 @@ def place_profile(id):
 
     return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
 
+
+# ------------- REVIEW
+def review_model(review):
+    loaded_model = TFDistilBertForSequenceClassification.from_pretrained("./model")
+    tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+
+    predict_input = tokenizer.encode(review,truncation=True,padding=True,return_tensors="tf")
+
+    tf_output = loaded_model.predict(predict_input)[0]
+    tf_prediction = tf.nn.softmax(tf_output, axis=1)
+    
+    labels = ['Negative','Positive']
+    label = tf.argmax(tf_prediction, axis=1)
+    label = label.numpy()
+    return(labels[label[0]])
+
+@app.route('/review<int:id>', methods=['POST', 'GET'])
+def review(id):
+    if request.method == 'POST':
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        review = request.form['review']
+        place = id
+        sentiment = review_model(review)
+
+        if g.user:
+            email = session['user']
+        elif g.owner:
+            email = session['owner']
+        else:
+            return redirect(url_for(index))
+
+        c.execute("INSERT INTO reviews (email, review, place, sentiment) VALUES (%s, %s, %s, %s)", (email, review, place, sentiment))
+        conn.commit()
+        return redirect(url_for('home'))
 
 
 @app.before_request
