@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from flask.helpers import send_file
 from io import BytesIO
 import psycopg2
+import heapq
 
 app = Flask(__name__)
 app.secret_key = 'ritesh'
@@ -60,7 +61,7 @@ def owner_login():
         for i in r:
             if (email == i[2] and password == i[3]):
                 session['owner'] = i[0]
-                return redirect(url_for('owner_home'))
+                return redirect(url_for('home'))
         else:
             flash("Invalid Email or Password", 'invalidOwner')
 
@@ -89,7 +90,7 @@ def user_login():
         for i in r:
             if (email == i[2] and password == i[3]):
                 session['user'] = i[0]
-                return redirect(url_for('user_home'))
+                return redirect(url_for('home'))
         else:
             flash("Invalid Email or Password", 'invalidUser')
 
@@ -102,9 +103,9 @@ def user_logout():
     return redirect(url_for('index'))
 
 
-# ------------- USER
-@app.route('/user_home')
-def user_home():
+# ------------- HOME PAGE
+@app.route('/home')
+def home():
     if g.user:
         conn = psycopg2.connect(database)
         c = conn.cursor()
@@ -118,33 +119,7 @@ def user_home():
             'rs': rs
         }
         return render_template('user_home.html', **context)
-    return redirect(url_for('index'))
-
-@app.route('/user_profile<int:id>')
-def user_profile(id):
-    if g.user:
-        conn = psycopg2.connect(database)
-        c = conn.cursor()
-
-        c.execute("SELECT * FROM users WHERE id = '"+str(id)+"'")
-        rs = c.fetchone()
-        certificate = rs[4]
-        conn.close()
-
-        return send_file(BytesIO(certificate), attachment_filename='flask.png', as_attachment=False)
-
-@app.route('/user_recommendation', methods=['GET', 'POST'])
-def user_recommendation():
-    if g.user:
-        if request.method == 'POST':
-            return render_template('user_recommendation.html')
-    return redirect(url_for('index'))
-
-
-# ------------- OWNER
-@app.route('/owner_home')
-def owner_home():
-    if g.owner:
+    elif g.owner:
         conn = psycopg2.connect(database)
         c = conn.cursor()
 
@@ -159,25 +134,64 @@ def owner_home():
         return render_template('owner_home.html', **context)
     return redirect(url_for('index'))
 
-@app.route('/owner_profile<int:id>')
-def owner_profile(id):
-    if g.owner:
+# ------------- RECOMMENDATION
+@app.route('/recommendation', methods=['GET', 'POST'])
+def recommendation():
+    if request.method == 'POST':
         conn = psycopg2.connect(database)
         c = conn.cursor()
 
-        c.execute("SELECT * FROM users WHERE id = '"+str(id)+"'")
-        rs = c.fetchone()
-        certificate = rs[4]
-        conn.close()
+        facilities = ''
+        city = request.form['city']
+        state = request.form['state']
+        place = request.form['place']
+        value = request.form.getlist('check')
 
-        return send_file(BytesIO(certificate), attachment_filename='flask.png', as_attachment=False)
+        c.execute("""SELECT * FROM places WHERE venue = %s AND state = %s AND city = %s""", (place, state, city))
+        placesss = c.fetchall()
+        scores = list()
+        for rs in placesss:
+            text = rs[9]
+            li = list(text.split(" "))
+            res = len(set(value) & set(li)) / float(len(set(value) | set(li))) * 100
+            scores.append(res)
+        
+        recom = heapq.nlargest(3, range(len(scores)), key=scores.__getitem__)
+        percent = heapq.nlargest(3, scores)
 
-@app.route('/owner_recommendation', methods=['GET', 'POST'])
-def owner_recommendation():
-    if g.owner:
-        if request.method == 'POST':
-            return render_template('owner_recommendation.html')
+        recomend = list()
+        for i in recom:
+            recomend.append(placesss[i][0])
+        
+        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[0])+"'")
+        place1 = c.fetchone()
+        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[1])+"'")
+        place2 = c.fetchone()
+        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[2])+"'")
+        place3 = c.fetchone()
+
+        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[0])+"'")
+        review1 = c.fetchall()
+        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[1])+"'")
+        review2 = c.fetchall()
+        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[2])+"'")
+        review3 = c.fetchall()
+    
+        context = {
+            'percent': percent,
+            'place1': place1,
+            'review1': review1,
+            'place2': place2,
+            'review2': review2,
+            'place3': place3,
+            'review3': review3,
+        }
+        if g.user:
+            return render_template('user_recommendation.html', **context)
+        elif g.owner:
+            return render_template('owner_recommendation.html', **context)
     return redirect(url_for('index'))
+
 
 @app.route('/owner_place')
 def owner_place():
@@ -190,6 +204,32 @@ def owner_new_place():
     if g.owner:
         return render_template('owner_new_place.html')
     return redirect(url_for('index'))
+
+
+# ------------- PROFILE PICTURES
+@app.route('/profile<int:id>')
+def profile(id):
+    conn = psycopg2.connect(database)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM users WHERE id = '"+str(id)+"'")
+    rs = c.fetchone()
+    picture = rs[4]
+    conn.close()
+
+    return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
+
+@app.route('/place_profile<int:id>')
+def place_profile(id):
+    conn = psycopg2.connect(database)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM places WHERE id = '"+str(id)+"'")
+    rs = c.fetchone()
+    picture = rs[2]
+
+    return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
+
 
 
 @app.before_request
