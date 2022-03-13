@@ -4,6 +4,10 @@
 <head>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         input[type="file"]::file-selector-button {
             color: white;
             padding: 10px 20px;
@@ -195,6 +199,21 @@
         .booking-form .submit-btn:hover,
         .booking-form .submit-btn:focus {
             opacity: 0.9;
+        }
+
+        @media screen and (max-width: 600px) {
+
+            .col-6,
+            .col-4 {
+                min-width: 100%;
+                margin-top: 0;
+            }
+
+            .booking-form {
+                padding-top: 30vh;
+                align-items: center;
+                align-self: center;
+            }
         }
     </style>
 
