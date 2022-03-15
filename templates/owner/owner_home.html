@@ -28,6 +28,33 @@
                                 <img src="/profile{{rs[0]}}" alt="" class="riteshimg img-thumbnail rounded-circle"
                                     style=" margin-top: -50px;">
                             </div>
+                            <form action="/home" method="POST" enctype="multipart/form-data">
+                                <div class="row text-center">
+                                    <div class="col-lg-12">
+                                        <br>
+                                        <input type="file" accept="image/*" id="file-multiple-input" name="profilepic"
+                                            class="form-control-file" required /> <br><br>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="gradient-button">
+                                            <button type="submit">
+                                                Update Profile Picture
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <style>
+                                input[type="file"]::file-selector-button {
+                                    color: white;
+                                    padding: 10px 20px;
+                                    border-radius: 30px;
+                                    background-color: #4583de;
+                                    border: none;
+                                    outline: none;
+                                }
+                            </style>
                         </div>
                     </div>
                 </div>
@@ -36,6 +63,12 @@
     </div>
 
     <style>
+        .riteshimg {
+            width: 500px;
+            height: 500px;
+            margin-top: -100px;
+        }
+
         @media screen and (max-width:600px) {
             .riteshfont {
                 font-size: 1.8rem !important;
@@ -43,6 +76,8 @@
 
             .riteshimg {
                 margin-top: 0px !important;
+                width: 300px;
+                height: 300px;
             }
         }
     </style>

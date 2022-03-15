@@ -113,7 +113,7 @@ def user_logout():
 
 
 # ------------- HOME PAGE
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     if g.user:
         conn = psycopg2.connect(database)
@@ -122,10 +122,35 @@ def home():
         c.execute("SELECT * FROM users WHERE id = '"+str(session['user'])+"'")
         rs = c.fetchone()
 
+        c.execute("SELECT COUNT(review) FROM reviews WHERE userid= '"+str(session['user'])+"'")
+        reviewno = c.fetchone()
+        
+        if rs[6] is not None:
+            c.execute("SELECT * FROM places WHERE venue = '"+rs[6]+"' ORDER BY RANDOM() LIMIT 3")
+            hotvenues = c.fetchall()
+            venueType = rs[6]
+        else:
+            c.execute("SELECT * FROM places ORDER BY RANDOM() LIMIT 3")
+            hotvenues = c.fetchall()
+            venueType = 'Select Venue'
+
+        if request.method == 'POST':
+            profilepic = request.files['profilepic']
+            c.execute("UPDATE users SET profile = (%s) WHERE id = (%s)", (profilepic.read(), session['user']))
+
+            conn.commit()
+            conn.close()
+
+            flash("Profile Picture Updated successfully ! ", 'profileupdate')
+            return redirect(url_for('home'))
+
         conn.close()
 
         context = {
-            'rs': rs
+            'rs': rs,
+            'hotvenues': hotvenues,
+            'venueType': venueType,
+            'reviewno': reviewno
         }
         return render_template('user/user_home.html', **context)
     elif g.owner:
@@ -135,6 +160,16 @@ def home():
         c.execute("SELECT * FROM users WHERE id = '"+str(session['owner'])+"'")
         rs = c.fetchone()
 
+        if request.method == 'POST':
+            profilepic = request.files['profilepic']
+            c.execute("UPDATE users SET profile = (%s) WHERE id = (%s)", (profilepic.read(), session['owner']))
+
+            conn.commit()
+            conn.close()
+
+            flash("Profile Picture Updated successfully ! ", 'profileupdate')
+            return redirect(url_for('home'))
+
         conn.close()
 
         context = {
@@ -142,6 +177,22 @@ def home():
         }
         return render_template('owner/owner_home.html', **context)
     return redirect(url_for('index'))
+
+
+# ------------- HOT VENUE PREFERENCE
+@app.route('/preference<int:id>', methods=['GET', 'POST'])
+def preference(id):
+    if request.method == 'POST':
+        conn = psycopg2.connect(database)
+        c = conn.cursor()
+
+        preference = request.form['place']
+        c.execute("UPDATE users SET preference = (%s) WHERE id = (%s)", (preference, id))
+        conn.commit()
+        conn.close()
+
+        flash("Preference Updated successfully ! ", 'preference')
+        return redirect(url_for('home'))
 
 
 # ------------- RECOMMENDATION
