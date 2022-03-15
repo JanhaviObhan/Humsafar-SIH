@@ -127,7 +127,7 @@ def home():
         context = {
             'rs': rs
         }
-        return render_template('user_home.html', **context)
+        return render_template('user/user_home.html', **context)
     elif g.owner:
         conn = psycopg2.connect(database)
         c = conn.cursor()
@@ -140,66 +140,64 @@ def home():
         context = {
             'rs': rs
         }
-        return render_template('owner_home.html', **context)
+        return render_template('owner/owner_home.html', **context)
     return redirect(url_for('index'))
 
 
 # ------------- RECOMMENDATION
 @app.route('/recommendation', methods=['GET', 'POST'])
 def recommendation():
-    if request.method == 'POST':
-        conn = psycopg2.connect(database)
-        c = conn.cursor()
+    if g.user:
+        if request.method == 'POST':
+            conn = psycopg2.connect(database)
+            c = conn.cursor()
 
-        facilities = ''
-        city = request.form['city']
-        state = request.form['state']
-        place = request.form['place']
-        value = request.form.getlist('check')
+            facilities = ''
+            city = request.form['city']
+            state = request.form['state']
+            place = request.form['place']
+            value = request.form.getlist('check')
 
-        c.execute("""SELECT * FROM places WHERE venue = %s AND state = %s AND city = %s""", (place, state, city))
-        placesss = c.fetchall()
-        scores = list()
-        for rs in placesss:
-            text = rs[9]
-            li = list(text.split(" "))
-            res = len(set(value) & set(li)) / float(len(set(value) | set(li))) * 100
-            scores.append(res)
+            c.execute("""SELECT * FROM places WHERE venue = %s AND state = %s AND city = %s""", (place, state, city))
+            placesss = c.fetchall()
+            scores = list()
+            for rs in placesss:
+                text = rs[9]
+                li = list(text.split(" "))
+                res = len(set(value) & set(li)) / float(len(set(value) | set(li))) * 100
+                scores.append(res)
+            
+            recom = heapq.nlargest(3, range(len(scores)), key=scores.__getitem__)
+            percent = heapq.nlargest(3, scores)
+
+            recomend = list()
+            for i in recom:
+                recomend.append(placesss[i][0])
+            
+            c.execute("SELECT * FROM places WHERE id = '"+str(recomend[0])+"'")
+            place1 = c.fetchone()
+            c.execute("SELECT * FROM places WHERE id = '"+str(recomend[1])+"'")
+            place2 = c.fetchone()
+            c.execute("SELECT * FROM places WHERE id = '"+str(recomend[2])+"'")
+            place3 = c.fetchone()
+
+            c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[0])+"'")
+            review1 = c.fetchall()
+            c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[1])+"'")
+            review2 = c.fetchall()
+            c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[2])+"'")
+            review3 = c.fetchall()
         
-        recom = heapq.nlargest(3, range(len(scores)), key=scores.__getitem__)
-        percent = heapq.nlargest(3, scores)
-
-        recomend = list()
-        for i in recom:
-            recomend.append(placesss[i][0])
-        
-        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[0])+"'")
-        place1 = c.fetchone()
-        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[1])+"'")
-        place2 = c.fetchone()
-        c.execute("SELECT * FROM places WHERE id = '"+str(recomend[2])+"'")
-        place3 = c.fetchone()
-
-        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[0])+"'")
-        review1 = c.fetchall()
-        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[1])+"'")
-        review2 = c.fetchall()
-        c.execute("SELECT * FROM reviews WHERE place = '"+str(recomend[2])+"'")
-        review3 = c.fetchall()
-    
-        context = {
-            'percent': percent,
-            'place1': place1,
-            'review1': review1,
-            'place2': place2,
-            'review2': review2,
-            'place3': place3,
-            'review3': review3,
-        }
-        if g.user:
-            return render_template('user_recommendation.html', **context)
-        elif g.owner:
-            return render_template('owner_recommendation.html', **context)
+            context = {
+                'percent': percent,
+                'place1': place1,
+                'review1': review1,
+                'place2': place2,
+                'review2': review2,
+                'place3': place3,
+                'review3': review3,
+            }
+            return render_template('user/user_recommendation.html', **context)
     return redirect(url_for('index'))
 
 
@@ -216,7 +214,7 @@ def owner_place():
         context = {
             'place': place
         }
-        return render_template('owner_place.html', **context)
+        return render_template('owner/owner_place.html', **context)
     return redirect(url_for('index'))
 
 @app.route('/owner_new_place', methods=['GET', 'POST'])
@@ -259,7 +257,7 @@ def owner_new_place():
 
             flash("New Place added successfully ! ", 'newplace')
             return redirect(url_for('owner_place'))
-        return render_template('owner_new_place.html', **context)
+        return render_template('owner/owner_new_place.html', **context)
     return redirect(url_for('index'))
 
 @app.route('/owner_delete_place<int:id>')
@@ -320,7 +318,7 @@ def owner_update_place(id):
                 flash("Place data updated added successfully ! ", 'updateplace')
                 return redirect(url_for('owner_place'))
 
-        return render_template('owner_update_place.html', **context)
+        return render_template('owner/owner_update_place.html', **context)
     return redirect(url_for('index'))
 
 @app.route('/owner_review_place<int:id>')
@@ -348,7 +346,7 @@ def owner_review_place(id):
             'negative': negative
         }
 
-        return render_template('owner_review_place.html', **context)
+        return render_template('owner/owner_review_place.html', **context)
 
 
 # ------------- PROFILE PICTURES
