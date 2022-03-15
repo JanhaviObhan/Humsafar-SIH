@@ -225,7 +225,308 @@
     </div>
   </div>
 
+  <div id="pricing" class="pricing-tables">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+          <div class="section-heading">
+            <h4>
+              We Have The Best Recommendations for
+              <em>Differently abled friendly place</em> You Can Get
+            </h4>
+            <img src="assets/images/heading-line-dec.png" alt="" />
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/accessibility.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Find Accessibility of Equip</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/arrows.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Maps/Directions</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It is the best..</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/searching.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Advanced Search</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 15px;">
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/social-media.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Recommendations</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/customize.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Customization</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="container">
+            <div class="card">
+              <div class="imgBx">
+                <img class= 'pic' src="../static/assets/images/star.png" >
+              </div>
+              <div class="contentBx">
+                <h2>Know most viewed places</h2>
+                <div class="content">
+                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+      *{
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .pic {
+        width: 100px;
+        height: auto
+      }
+
+      .container{
+        position: relative;
+      }
+
+      .container .card{
+        position: relative;
+        width: 320px;
+        height: 450px;
+        background: #ffffff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      }
+
+      .container .card:before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #339af0;
+        clip-path: circle(150px at 80% 20%);
+        transition: 0.5s ease-in-out;
+      }
+
+      .container .card:hover:before{
+        clip-path: circle(300px at 80% -20%);
+      }
+
+      .container .card:after{
+        content: '';
+        position: absolute;
+        top: 30%;
+        left: -20%;
+        font-size: 12em;
+        font-weight: 800;
+        font-style: italic;
+        color: rgba(255,255,25,0.05)
+      }
+
+      .container .card .imgBx{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10000;
+        width: 100%;
+        height: 220px;
+        transition: 0.5s;
+      }
+
+      .container .card:hover .imgBx{
+        top: 0%;
+        transform: translateY(0%);
+          
+      }
+
+      .container .card .imgBx img{
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 150px;
+      }
+
+      .container .card .contentBx{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        text-align: center;
+        transition: 1s;
+        z-index: 10;
+      }
+
+      .container .card:hover .contentBx{
+        height: 210px;
+      }
+
+      .container .card .contentBx h2{
+        position: relative;
+        font-weight: 400;
+        letter-spacing: 0px;
+        color: #000;
+        margin: 0;
+      }
+
+      .container .card .contentBx .content, .container .card .contentBx .color {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 20px;
+        transition: 0.5s;opacity: 0;
+        visibility: hidden;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      .container .card:hover .contentBx .content{
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0.5s;
+      }
+
+      .container .card:hover .contentBx .color{
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0.6s;
+      }
+
+      .container .card .contentBx .content h3, .container .card .contentBx .color h3{
+        color: #0089c9;
+        font-weight: 300;
+        margin-top: 13%;
+        font-size: 18px;
+        letter-spacing: 0px;
+        margin-right: 10px; 
+      }
+
+      .container .card .contentBx .content span{
+        width: 26px;
+        height: 26px;
+        text-align: center;
+        line-height: 26px;
+        font-size: 14px;
+        display: inline-block;
+        color: #111;
+        background: #fff;
+        margin: 0 5px;
+        transition: 0.5s;
+        color: #111;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .container .card .contentBx .content span:hover{
+        background: #9bdc28;
+      }
+
+      .container .card .contentBx .color span{
+        width: 20px;
+        height: 20px;
+        background: #ff0;
+        border-radius: 50%;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+
+      .container .card .contentBx .color span:nth-child(2){
+        background: #9bdc28;
+      }
+
+      .container .card .contentBx .color span:nth-child(3){
+        background: #03a9f4;
+      }
+
+      .container .card .contentBx .color span:nth-child(4){
+        background: #e91e63;
+      }
+
+      .container .card .contentBx a{
+        display: inline-block;
+        padding: 10px 20px;
+        background: #fff;
+        border-radius: 4px;
+        margin-top: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        color: #111;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: 0.5s;
+        margin-top: 0;
+      }
+
+      .container .card:hover .contentBx a{
+        opacity: 1;
+        transform: translateY(0px);
+        transition-delay: 0.75s;
+        
+      }
+
     @media screen and (max-width:600px) {
       .riteshfont {
         font-size: 1.8rem !important;
