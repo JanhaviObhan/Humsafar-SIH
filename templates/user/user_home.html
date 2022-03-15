@@ -80,6 +80,9 @@
                       Welcome, <br> {{rs[1]}}
                     </h2>
                     <h4>Number of Reviews given: {{ reviewno[0] }}</h4>
+                    <div class="border-button">
+                      <a href="" class="col-lg-4" data-toggle="modal" data-target="#Modal">View Reviews</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,6 +356,91 @@
     .filter_form #facilities label,
     .filter_form #facilities input {
       margin-left: 10px;
+    }
+  </style>
+
+  <div class="modal fade" id="Modal" role="dialog">
+    <div class="modal-dialog" style="min-width: 70%; max-height: 50px;">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h7 class="modal-title" id="exampleModalLongTitle"><b>Reviews</b></h7>
+          <a href="" type="gradient-button" class="close" data-dismiss="modal" aria-label="Close">
+            x
+          </a>
+        </div>
+        <div class="modal-body">
+          <div class="content align-content-center">
+            <div class="container">
+              <div class="row bootstrap snippets bootdeys">
+                <div class="col-lg-12">
+                  <div class="comment-wrapper">
+                    <div class="panel-body">
+                      <ul class="media-list">
+
+                        {% for review in reviews %}
+                        <li class="media row">
+                          <a href="#" class="col-lg-2">
+                            <img src="/place_profile{{review[1]}}" alt="" class="img-thumbnail rounded-circle" />
+                          </a>
+                          <div class="media-body col-lg-4">
+                            <strong class=" text">{{review[3]}} | {{review[2]}}</strong>
+                            <p>
+                              {{review[0]}}
+                            </p>
+                          </div>
+                        </li>
+                        {% endfor %}
+
+                      </ul>
+                    </div>
+                    <hr />
+                    <div class="clearfix"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .comment-wrapper .panel-body {
+      width: 90%;
+      max-height: 550px;
+      overflow: hidden;
+      align-items: center;
+    }
+
+    form,
+    hr {
+      width: 90%;
+    }
+
+    .comment-wrapper .media-list .media img {
+      width: 64px;
+      height: 64px;
+      border: 2px solid #e5e7e8;
+      align-items: center;
+    }
+
+    .comment-wrapper .media-list .media {
+      border-bottom: 1px dashed #e5e7e8;
+      margin-bottom: 25px;
+      padding-bottom: 5px;
+    }
+
+    .comment-wrapper .media-list .media .media-body {
+      margin-left: -70px;
+      padding-left: 0;
+    }
+
+    @media screen and (max-width: 600px) {
+      .comment-wrapper .media-list .media .media-body {
+        margin-left: 20px;
+      }
     }
   </style>
 

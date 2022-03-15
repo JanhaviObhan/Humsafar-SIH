@@ -124,7 +124,10 @@ def home():
 
         c.execute("SELECT COUNT(review) FROM reviews WHERE userid= '"+str(session['user'])+"'")
         reviewno = c.fetchone()
-        
+
+        c.execute("SELECT r.review, r.place, r.sentiment, p.propertyname FROM reviews r, places p WHERE r.place = p.id AND r.userid = '"+str(session['user'])+"'")
+        reviews = c.fetchall()
+
         if rs[6] is not None:
             c.execute("SELECT * FROM places WHERE venue = '"+rs[6]+"' ORDER BY RANDOM() LIMIT 3")
             hotvenues = c.fetchall()
@@ -150,7 +153,8 @@ def home():
             'rs': rs,
             'hotvenues': hotvenues,
             'venueType': venueType,
-            'reviewno': reviewno
+            'reviewno': reviewno,
+            'reviews': reviews
         }
         return render_template('user/user_home.html', **context)
     elif g.owner:
@@ -400,7 +404,7 @@ def owner_review_place(id):
         return render_template('owner/owner_review_place.html', **context)
 
 
-# ------------- PROFILE PICTURES
+# ------------- PROFILE PICTURES AND NAME
 @app.route('/profile<int:id>')
 def profile(id):
     conn = psycopg2.connect(database)
@@ -424,6 +428,16 @@ def place_profile(id):
 
     return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
 
+@app.route('/place_name<int:id>')
+def place_name(id):
+    conn = psycopg2.connect(database)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM places WHERE id = '"+str(id)+"'")
+    rs = c.fetchone()
+    placename = rs[1]
+
+    return placename
 
 # ------------- REVIEW
 def review_model(review):
