@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, url_for, redirect, flash, g, session
 from flask import Flask, jsonify
 from flask.helpers import send_file
@@ -5,18 +6,26 @@ from io import BytesIO
 import psycopg2
 import heapq
 import tensorflow as tf
+from dotenv import load_dotenv
+import requests, json
+from geopy.geocoders import Nominatim
+import geocoder
+import time
+from pprint import pprint
 from transformers import DistilBertTokenizerFast
 from transformers import TFDistilBertForSequenceClassification
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = 'ritesh'
+app.config["SECRET_KEY"] = os.environ.get("APP_SECRET_KEY")
+
 
 database = 'postgres://gjscfkpgyogvvp:76996cc99db43b0479e8c5ecf0181da2d41561c9f50efbd6622d97ace7259df8@ec2-3-216-221-31.compute-1.amazonaws.com:5432/df095rdjmq8tsv'
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 # ------------- REGISTRATION
 @app.route('/register', methods=['GET', 'POST'])
@@ -148,13 +157,22 @@ def home():
             return redirect(url_for('home'))
 
         conn.close()
-
+        print(hotvenues)
+        app_nom = Nominatim(user_agent="tutorial")
+        my_location= geocoder.ip('me')
+        latitude= my_location.geojson['features'][0]['properties']['lat']
+        longitude = my_location.geojson['features'][0]['properties']['lng']
+        print(latitude,longitude)
+        #get the location
+        
         context = {
             'rs': rs,
             'hotvenues': hotvenues,
             'venueType': venueType,
             'reviewno': reviewno,
-            'reviews': reviews
+            'reviews': reviews,
+            'latitude': latitude,
+            'longitude':longitude
         }
         return render_template('user/user_home.html', **context)
     elif g.owner:
