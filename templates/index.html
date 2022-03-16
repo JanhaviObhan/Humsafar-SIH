@@ -244,7 +244,7 @@
                 <img class= 'pic' src="../static/assets/images/accessibility.png" >
               </div>
               <div class="contentBx">
-                <h2>Find Accessibility of Equip</h2>
+                <h4>Find Accessibility of Equip</h4>
                 <div class="content">
                   <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
                 </div>
@@ -259,7 +259,7 @@
                 <img class= 'pic' src="../static/assets/images/arrows.png" >
               </div>
               <div class="contentBx">
-                <h2>Maps/Directions</h2>
+                <h4>Maps/Directions</h4>
                 <div class="content">
                   <h3>It very very Relaible. It is the best..</h3>
                 </div>
@@ -274,7 +274,7 @@
                 <img class= 'pic' src="../static/assets/images/searching.png" >
               </div>
               <div class="contentBx">
-                <h2>Advanced Search</h2>
+                <h4 >Advanced Search</h4 >
                 <div class="content">
                   <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
                 </div>
@@ -291,7 +291,7 @@
                 <img class= 'pic' src="../static/assets/images/social-media.png" >
               </div>
               <div class="contentBx">
-                <h2>Recommendations</h2>
+                <h4 >Recommendations</h4 >
                 <div class="content">
                   <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
                 </div>
@@ -306,7 +306,7 @@
                 <img class= 'pic' src="../static/assets/images/customize.png" >
               </div>
               <div class="contentBx">
-                <h2>Customization</h2>
+                <h4 >Customization</h4 >
                 <div class="content">
                   <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
                 </div>
@@ -321,7 +321,7 @@
                 <img class= 'pic' src="../static/assets/images/star.png" >
               </div>
               <div class="contentBx">
-                <h2>Know most viewed places</h2>
+                <h4 >Know most viewed places</h4 >
                 <div class="content">
                   <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
                 </div>
@@ -341,8 +341,9 @@
       }
 
       .pic {
-        width: 100px;
-        height: auto
+        /* width: 100px; */
+        height: auto;
+               
       }
 
       .container{
@@ -351,12 +352,13 @@
 
       .container .card{
         position: relative;
-        width: 320px;
+        /* width: 380px; */
         height: 450px;
         background: #ffffff;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        margin-bottom: 10px;
       }
 
       .container .card:before{
@@ -383,7 +385,8 @@
         font-size: 12em;
         font-weight: 800;
         font-style: italic;
-        color: rgba(255,255,25,0.05)
+        color: rgba(255,255,25,0.05);
+        
       }
 
       .container .card .imgBx{
@@ -399,10 +402,11 @@
       .container .card:hover .imgBx{
         top: 0%;
         transform: translateY(0%);
-          
+        z-index: 1;
       }
 
       .container .card .imgBx img{
+        z-index: -1;
         position: absolute;
         top: 40%;
         left: 50%;
@@ -417,7 +421,7 @@
         height: 100px;
         text-align: center;
         transition: 1s;
-        z-index: 10;
+        z-index: 1;
       }
 
       .container .card:hover .contentBx{
