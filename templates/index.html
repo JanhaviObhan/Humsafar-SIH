@@ -84,20 +84,15 @@
       <!-- Social Login -->
       <div class="social_login">
         <div class="">
-          <a href="#" id="user_login" class="social_box fb">
+          <a href="#" id="user_login" onclick="speak_login()" class="social_box fb">
             <span class="icon"><i class="fas fa-user"></i></span>
-            <span class="icon_title">User Login</span>
+            <span class="icon_title">Login</span>
 
           </a>
-
-          <a href="#" id="owner_login" class="social_box google">
+          <a href="#" id="register_form" onclick="speak_register()" class="social_box google">
             <span class="icon"><i class="fas fa-user-plus"></i></span>
-            <span class="icon_title">Owner Login</span>
+            <span class="icon_title">Register</span>
           </a>
-        </div>
-
-        <div class="action_btns">
-          <div class="full"><a href="#" id="register_form" class="btn">Register</a></div>
         </div>
       </div>
 
@@ -105,11 +100,11 @@
       <div class="user_login">
         <form action="/user_login" method="POST" id="userLoginForm">
           <label>Email</label>
-          <input type="email" name="email" required />
+          <input type="email" id="user_email" name="email" onclick="tts('This is Email Address')" required />
           <br />
 
           <label>Password</label>
-          <input type="password" name="password" required />
+          <input type="password" id="user_pass" onclick="tts('This is Password')" name="password" required />
           <br />
 
           <div class="action_btns">
@@ -122,44 +117,23 @@
         <a href="#" class="forgot_password">Forgot password?</a>
       </div>
 
-      <!-- Owner Login form -->
-      <div class="owner_login">
-        <form action="/owner_login" method="POST" id="ownerLoginForm">
-          <label>Email</label>
-          <input type="email" name="email" required />
-          <br />
-
-          <label>Password</label>
-          <input type="password" name="password" required />
-          <br />
-
-          <div class="action_btns">
-            <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a>
-            </div>
-            <div class="one_half last"><a href="#" class="btn btn_red" onclick="ownerSubmit()">Login</a></div>
-          </div>
-        </form>
-
-        <a href="#" class="forgot_password">Forgot password?</a>
-      </div>
-
       <!-- Register Form -->
       <div class="user_register">
         <form action="/register" method="POST" id="registerForm" enctype="multipart/form-data">
           <label>Full Name</label>
-          <input type="text" name="username" required />
+          <input type="text" id="reg_username" name="username" onclick="tts('Enter you Full Name')" />
           <br />
 
           <label>Email Address</label>
-          <input type="email" name="email" required />
+          <input type="email" id="reg_email" name="email" onclick="tts('Enter you Email Address')" />
           <br />
 
           <label>Password</label>
-          <input type="password" name="password" required />
+          <input type="password" id="regs_pass" name="password" onclick="tts('Enter you Password')" />
           <br />
 
           <label for="">Role</label>
-          <select name="role" id="" required>
+          <select name="role" id="role" onclick="tts('Select your role')">
             <option value="" disabled selected> -- SELECT -- </option>
             <option value="user">User</option>
             <option value="owner">Owner</option>
@@ -167,7 +141,8 @@
           <br>
 
           <label for="">Profile Picture</label>
-          <input type="file" accept="image/*" name="profile" class="input-text" required>
+          <input type="file" accept="image/*" name="profile" onclick="tts('Choose your Profile Picture')"
+            class="input-text" required>
           <br>
 
           <div class="action_btns">
@@ -179,16 +154,85 @@
 
         <script>
           function userSubmit() {
-            document.getElementById("userLoginForm").submit();
+            var email = document.getElementById('user_email');
+            var passwd = document.getElementById('user_pass');
+            if (email.value == "" || passwd.value == "") {
+              if (email.value == "") {
+                alert("Email Address cannot be blank!");
+                email.focus();
+                tts('Email Address cannot be blank!');
+              }
+              else if (passwd.value == "") {
+                alert("Password cannot be blank!");
+                passwd.focus();
+                tts('Password cannot be blank!');
+              }
+            }
+            else {
+              var email_check = validateEmail(email);
+              if (email_check) {
+                document.getElementById("userLoginForm").submit();
+              }
+              else {
+                alert("Incorrect Email");
+                email.focus();
+                tts('Incorrect Email');
+              }
+            }
           }
-          function ownerSubmit() {
-            document.getElementById("ownerLoginForm").submit();
+          function validateEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if (re.test(email.value)) {
+              return true;
+            }
+            else {
+              // alert("Invalid Email Id");
+              email.focus();
+              return false;
+            }
           }
           function registerSubmit() {
-            document.getElementById("registerForm").submit();
+            var email = document.getElementById('reg_email');
+            var fname = document.getElementById('reg_username');
+            var passwd = document.getElementById('regs_pass');
+            var role = document.getElementById('role');
+            if (fname.value == "" || email.value == "" || passwd.value == "" || role.value == "") {
+              if (fname.value == "") {
+                alert("Full Name cannot be blank!");
+                fname.focus();
+                tts("Full Name cannot be blank!");
+
+              }
+              else if (email.value == "") {
+                alert("Email Address cannot be blank!");
+                email.focus();
+                tts("Email Address cannot be blank!");
+              }
+              else if (passwd.value == "") {
+                alert("Password cannot be blank!");
+                passwd.focus();
+                tts("Password cannot be blank!");
+              }
+              else if (role.value == "") {
+                alert("Role cannot be blank!");
+                role.focus();
+                tts("Role cannot be blank!");
+              }
+            }
+            else {
+              var email_check = validateEmail(email);
+              if (email_check) {
+                tts("Registeration Successful");
+                document.getElementById("registerForm").submit();
+              }
+              else {
+                alert("Incorrect Email");
+                email.focus();
+                tts("Incorrect Email Entered");
+              }
+            }
           }
         </script>
-
       </div>
     </section>
   </div>
@@ -241,12 +285,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/accessibility.png" >
+                <img class='pic' src="../static/assets/images/social-media.png">
               </div>
               <div class="contentBx">
-                <h4>Find Accessibility of Equip</h4>
+                <h4>Preference based Recommendation</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                  <h3>Find personified places filtered by your preference.</h3>
                 </div>
               </div>
             </div>
@@ -256,12 +300,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/arrows.png" >
+                <img class='pic' src="../static/assets/images/arrows.png">
               </div>
               <div class="contentBx">
                 <h4>Maps/Directions</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It is the best..</h3>
+                  <h3>Get relaible navigation to reach your searched place.</h3>
                 </div>
               </div>
             </div>
@@ -271,12 +315,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/searching.png" >
+                <img class='pic' src="../static/assets/images/searching.png">
               </div>
               <div class="contentBx">
-                <h4 >Advanced Search</h4 >
+                <h4>Advanced Search</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                  <h3>Specify additional requirements while searching a place.</h3>
                 </div>
               </div>
             </div>
@@ -288,12 +332,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/social-media.png" >
+                <img class='pic' src="../static/assets/images/star.png">
               </div>
               <div class="contentBx">
-                <h4 >Recommendations</h4 >
+                <h4>Explore Popular Places</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                  <h3>Look at the top and most popular places filtered by maximum reviews.</h3>
                 </div>
               </div>
             </div>
@@ -303,12 +347,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/customize.png" >
+                <img class='pic' src="../static/assets/images/customize.png">
               </div>
               <div class="contentBx">
-                <h4 >Customization</h4 >
+                <h4>Customization</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                  <h3>Build your personalised search preference.</h3>
                 </div>
               </div>
             </div>
@@ -318,12 +362,12 @@
           <div class="container">
             <div class="card">
               <div class="imgBx">
-                <img class= 'pic' src="../static/assets/images/star.png" >
+                <img class='pic' src="../static/assets/images/accessibility.png">
               </div>
               <div class="contentBx">
-                <h4 >Know most viewed places</h4 >
+                <h4>Accessibility based Recommendation</h4>
                 <div class="content">
-                  <h3>It very very Relaible. It very very Relaible. It very very Relaible.</h3>
+                  <h3>Find personified places filtered by available accessibility features.</h3>
                 </div>
               </div>
             </div>
@@ -334,202 +378,205 @@
   </div>
 
   <style>
-      @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-      *{
-        font-family: 'Poppins', sans-serif;
-      }
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
 
-      .pic {
-        /* width: 100px; */
-        height: auto;
-               
-      }
+    .pic {
+      /* width: 100px; */
+      height: auto;
 
-      .container{
-        position: relative;
-      }
+    }
 
-      .container .card{
-        position: relative;
-        /* width: 380px; */
-        height: 450px;
-        background: #ffffff;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-        margin-bottom: 10px;
-      }
+    .container {
+      position: relative;
+    }
 
-      .container .card:before{
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #339af0;
-        clip-path: circle(150px at 80% 20%);
-        transition: 0.5s ease-in-out;
-      }
+    .container .card {
+      position: relative;
+      /* width: 380px; */
+      height: 450px;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      margin-bottom: 10px;
+    }
 
-      .container .card:hover:before{
-        clip-path: circle(300px at 80% -20%);
-      }
+    .container .card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #339af0;
+      clip-path: circle(150px at 80% 20%);
+      transition: 0.5s ease-in-out;
+    }
 
-      .container .card:after{
-        content: '';
-        position: absolute;
-        top: 30%;
-        left: -20%;
-        font-size: 12em;
-        font-weight: 800;
-        font-style: italic;
-        color: rgba(255,255,25,0.05);
-        
-      }
+    .container .card:hover:before {
+      clip-path: circle(300px at 80% -20%);
+    }
 
-      .container .card .imgBx{
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10000;
-        width: 100%;
-        height: 220px;
-        transition: 0.5s;
-      }
+    .container .card:after {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: -20%;
+      font-size: 12em;
+      font-weight: 800;
+      font-style: italic;
+      color: rgba(255, 255, 25, 0.05);
 
-      .container .card:hover .imgBx{
-        top: 0%;
-        transform: translateY(0%);
-        z-index: 1;
-      }
+    }
 
-      .container .card .imgBx img{
-        z-index: -1;
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 150px;
-      }
+    .container .card .imgBx {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10000;
+      width: 100%;
+      height: 220px;
+      transition: 0.5s;
+    }
 
-      .container .card .contentBx{
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100px;
-        text-align: center;
-        transition: 1s;
-        z-index: 1;
-      }
+    .container .card:hover .imgBx {
+      top: 0%;
+      transform: translateY(0%);
+      z-index: 1;
+    }
 
-      .container .card:hover .contentBx{
-        height: 210px;
-      }
+    .container .card .imgBx img {
+      z-index: -1;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+    }
 
-      .container .card .contentBx h2{
-        position: relative;
-        font-weight: 400;
-        letter-spacing: 0px;
-        color: #000;
-        margin: 0;
-      }
+    .container .card .contentBx {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 100px;
+      text-align: center;
+      transition: 1s;
+      z-index: 1;
+    }
 
-      .container .card .contentBx .content, .container .card .contentBx .color {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 8px 20px;
-        transition: 0.5s;opacity: 0;
-        visibility: hidden;
-        padding-top: 0;
-        padding-bottom: 0;
-      }
+    .container .card:hover .contentBx {
+      height: 210px;
+    }
 
-      .container .card:hover .contentBx .content{
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 0.5s;
-      }
+    .container .card .contentBx h2 {
+      position: relative;
+      font-weight: 400;
+      letter-spacing: 0px;
+      color: #000;
+      margin: 0;
+    }
 
-      .container .card:hover .contentBx .color{
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 0.6s;
-      }
+    .container .card .contentBx .content,
+    .container .card .contentBx .color {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 20px;
+      transition: 0.5s;
+      opacity: 0;
+      visibility: hidden;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
 
-      .container .card .contentBx .content h3, .container .card .contentBx .color h3{
-        color: #0089c9;
-        font-weight: 300;
-        margin-top: 13%;
-        font-size: 18px;
-        letter-spacing: 0px;
-        margin-right: 10px; 
-      }
+    .container .card:hover .contentBx .content {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0.5s;
+    }
 
-      .container .card .contentBx .content span{
-        width: 26px;
-        height: 26px;
-        text-align: center;
-        line-height: 26px;
-        font-size: 14px;
-        display: inline-block;
-        color: #111;
-        background: #fff;
-        margin: 0 5px;
-        transition: 0.5s;
-        color: #111;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+    .container .card:hover .contentBx .color {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0.6s;
+    }
 
-      .container .card .contentBx .content span:hover{
-        background: #9bdc28;
-      }
+    .container .card .contentBx .content h3,
+    .container .card .contentBx .color h3 {
+      color: #0089c9;
+      font-weight: 300;
+      margin-top: 13%;
+      font-size: 20px;
+      letter-spacing: 0px;
+      margin-right: 10px;
+    }
 
-      .container .card .contentBx .color span{
-        width: 20px;
-        height: 20px;
-        background: #ff0;
-        border-radius: 50%;
-        margin: 0 5px;
-        cursor: pointer;
-      }
+    .container .card .contentBx .content span {
+      width: 26px;
+      height: 26px;
+      text-align: center;
+      line-height: 26px;
+      font-size: 14px;
+      display: inline-block;
+      color: #111;
+      background: #fff;
+      margin: 0 5px;
+      transition: 0.5s;
+      color: #111;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-      .container .card .contentBx .color span:nth-child(2){
-        background: #9bdc28;
-      }
+    .container .card .contentBx .content span:hover {
+      background: #9bdc28;
+    }
 
-      .container .card .contentBx .color span:nth-child(3){
-        background: #03a9f4;
-      }
+    .container .card .contentBx .color span {
+      width: 20px;
+      height: 20px;
+      background: #ff0;
+      border-radius: 50%;
+      margin: 0 5px;
+      cursor: pointer;
+    }
 
-      .container .card .contentBx .color span:nth-child(4){
-        background: #e91e63;
-      }
+    .container .card .contentBx .color span:nth-child(2) {
+      background: #9bdc28;
+    }
 
-      .container .card .contentBx a{
-        display: inline-block;
-        padding: 10px 20px;
-        background: #fff;
-        border-radius: 4px;
-        margin-top: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        color: #111;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: 0.5s;
-        margin-top: 0;
-      }
+    .container .card .contentBx .color span:nth-child(3) {
+      background: #03a9f4;
+    }
 
-      .container .card:hover .contentBx a{
-        opacity: 1;
-        transform: translateY(0px);
-        transition-delay: 0.75s;
-        
-      }
+    .container .card .contentBx .color span:nth-child(4) {
+      background: #e91e63;
+    }
+
+    .container .card .contentBx a {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #fff;
+      border-radius: 4px;
+      margin-top: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #111;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: 0.5s;
+      margin-top: 0;
+    }
+
+    .container .card:hover .contentBx a {
+      opacity: 1;
+      transform: translateY(0px);
+      transition-delay: 0.75s;
+
+    }
 
     @media screen and (max-width:600px) {
       .riteshfont {
@@ -544,6 +591,29 @@
 
 
   {% include 'footer.html' %}
+  <script>
+    $(document).ready(function () {
+      // alert("Hello");
+      body_load();
+    });
+    function body_load() {
+      tts("Hi I am your Humsafar I will guide and help you");
+    }
+
+    function speak_login() {
+      tts("This is the Login Page");
+      var email = document.getElementById('user_email');
+      email.focus();
+    }
+
+    function speak_register() {
+      tts("This is the Registeration Page");
+      var fname = document.getElementById('reg_username');
+      fname.focus();
+    }
+
+  </script>
+
 </body>
 
 </html>
