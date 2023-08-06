@@ -12,6 +12,7 @@ from geopy.geocoders import Nominatim
 import geocoder
 import time
 from pprint import pprint
+import PIL.Image as Image
 from transformers import DistilBertTokenizerFast
 from transformers import TFDistilBertForSequenceClassification
 
@@ -20,12 +21,16 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("APP_SECRET_KEY")
 
-
+app_root = app.root_path 
 database = 'postgres://gjscfkpgyogvvp:76996cc99db43b0479e8c5ecf0181da2d41561c9f50efbd6622d97ace7259df8@ec2-3-216-221-31.compute-1.amazonaws.com:5432/df095rdjmq8tsv'
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/old_ui/')
+def index_old():
+    return render_template('index_old.html')
 
 # ------------- REGISTRATION
 @app.route('/register', methods=['GET', 'POST'])
@@ -95,6 +100,7 @@ def owner_logout():
 def user_login():
     if request.method == 'POST':
         session.pop('user', None)
+        session.pop('owner', None)
 
         email = request.form['email']
         password = request.form['password']
@@ -104,15 +110,25 @@ def user_login():
         c.execute("SELECT * FROM users WHERE role = 'user' AND email = '" +
                   email+"' AND password = '"+password+"'")
         r = c.fetchall()
-
+        user_login = 0
         for i in r:
             if (email == i[2] and password == i[3]):
                 session['user'] = i[0]
+                user_login = 1
+                conn.close()
                 return redirect(url_for('home'))
-        else:
-            flash("Invalid Email or Password", 'invalidUser')
-
-        conn.close()
+            else:
+                user_login = 0
+        if user_login == 0:
+            c.execute("SELECT * FROM users WHERE role = 'owner' AND email = '" +email+"' AND password = '"+password+"'")
+            r = c.fetchall()
+            for i in r:
+                if (email == i[2] and password == i[3]):
+                    session['owner'] = i[0]
+                    return redirect(url_for('home'))    
+                else:
+                    flash("Invalid Email or Password", 'invalidUser')
+            conn.close()
     return redirect(url_for('index'))
 
 @app.route('/user_logout')
@@ -174,6 +190,7 @@ def home():
             'latitude': latitude,
             'longitude':longitude
         }
+        print(hotvenues)
         return render_template('user/user_home.html', **context)
     elif g.owner:
         conn = psycopg2.connect(database)
@@ -181,6 +198,9 @@ def home():
 
         c.execute("SELECT * FROM users WHERE id = '"+str(session['owner'])+"'")
         rs = c.fetchone()
+
+        c.execute("SELECT COUNT(propertyname) FROM places WHERE owner= '"+str(session['owner'])+"'")
+        placeno = c.fetchone()
 
         if request.method == 'POST':
             profilepic = request.files['profilepic']
@@ -192,10 +212,13 @@ def home():
             flash("Profile Picture Updated successfully ! ", 'profileupdate')
             return redirect(url_for('home'))
 
+        c.execute("SELECT * FROM places WHERE owner = '"+str(session['owner'])+"'")
+        place = c.fetchall()
         conn.close()
-
+        print(place)
         context = {
-            'rs': rs
+            'rs': rs,
+            'placeno': placeno
         }
         return render_template('owner/owner_home.html', **context)
     return redirect(url_for('index'))
@@ -208,7 +231,7 @@ def preference(id):
         conn = psycopg2.connect(database)
         c = conn.cursor()
 
-        preference = request.form['place']
+        preference = request.form['venue']
         c.execute("UPDATE users SET preference = (%s) WHERE id = (%s)", (preference, id))
         conn.commit()
         conn.close()
@@ -428,12 +451,20 @@ def profile(id):
     conn = psycopg2.connect(database)
     c = conn.cursor()
 
-    c.execute("SELECT * FROM users WHERE id = '"+str(id)+"'")
+    c.execute("SELECT profile FROM users WHERE id = '"+str(id)+"'")
     rs = c.fetchone()
-    picture = rs[4]
+    print(rs)
+    picture = rs[0]
     conn.close()
-
-    return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
+    if len(BytesIO(picture).getvalue()) != 0:            
+        return send_file(BytesIO(picture), attachment_filename='flask.png', as_attachment=False)
+    else:
+        img_path = app_root+"/static/assets/images/user.png"
+        print(img_path)
+        with open(img_path, "rb") as image:
+            f = image.read()
+            img_bytes = bytearray(f)
+        return send_file(BytesIO(img_bytes), attachment_filename='flask.png', as_attachment=False)
 
 @app.route('/place_profile<int:id>')
 def place_profile(id):
@@ -508,4 +539,4 @@ def before_request():
         g.owner = session['owner']
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.0.103')
