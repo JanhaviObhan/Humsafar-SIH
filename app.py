@@ -32,7 +32,7 @@ def index():
 def index_old():
     return render_template('index_old.html')
 
-# ------------- REGISTRATION
+# ----- REGISTRATION
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
